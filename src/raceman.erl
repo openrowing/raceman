@@ -12,6 +12,7 @@ start() ->
     ensure_started(ssl),
     ensure_started(mochiweb),
     ensure_started(webmachine),
+    ensure_started(hackney),
     ensure_started(raceman),
 
 	reloader:start().
