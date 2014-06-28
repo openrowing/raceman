@@ -37,6 +37,9 @@ Installation
         
 5. Open [http://localhost:8080/](http://localhost:8080/) in your browser.
 
+Beenden der laufenden Anwendung in der REPL mit `halt().`
+
+
 
 Development
 -----------
