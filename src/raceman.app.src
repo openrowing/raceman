@@ -1,6 +1,6 @@
 {application, raceman,
  [
-  {description, ""},
+  {description, "RaceMan, an open rowing race manager"},
   {vsn, "1"},
   {registered, []},
   {applications, [
