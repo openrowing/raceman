@@ -1,0 +1,15 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}RaceMan - Home{% endblock %}
+
+{% block content %}
+
+ <div class="container">
+  <div class="jumbotron">
+   <h1>RaceManager: Bestzeiten in Echtzeit.</h1>
+
+   <p><a class="btn btn-primary btn-lg" role="button">Amaze me</a></p>
+  </div>
+ </div>
+
+{% endblock  %}

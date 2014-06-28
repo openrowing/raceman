@@ -1,0 +1,10 @@
+{application,raceman,
+             [{description,[]},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {mod,{raceman_app,[]}},
+              {env,[]},
+              {modules,['base.html_dtl','dashboard.html_dtl',dashboard_dtl,
+                        hello_dtl,hello_resource,raceman,raceman_app,
+                        raceman_sup,reloader,root_resource]}]}.
