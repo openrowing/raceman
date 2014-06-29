@@ -11,7 +11,7 @@ transform_cypher_result([{columns, Columns}, {data, Data}]) ->
 transform_cypher_result(_) ->
 	false.
 
-transform([Column|Columns], [Item|Items]) -> 
+transform([Column|Columns], [Item|Items]) ->
 	lists:append([{Column, Item}], transform(Columns, Items));
 
 transform([], []) ->
