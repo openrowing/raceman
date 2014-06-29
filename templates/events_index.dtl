@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}RaceMan - Regatten{% endblock %}
+
+{% block content %}
+
+
+  <div class=container>
+   <ul>
+    {% for event in events %}
+     <li><a href="/events/{{event.id}}">{{ event.name }}</a>
+    {% endfor %}
+   </ul>
+  </div>
+
+{% endblock  %}
