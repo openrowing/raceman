@@ -34,11 +34,14 @@ resource_exists(ReqData, Context) ->
 			{true, ReqData, Context#context{action=index_or_create}};
 		_Else ->
 			{false, ReqData, Context}
-	end.		
+	end.
 
 to_html(ReqData, Context) when Context#context.action == index_or_create ->
 
-    {ok, Events} = neo4j_utils:transform_cypher_result(neo4j:cypher(Context#context.neo, <<"MATCH (n) RETURN n.name AS name, ID(n) AS id LIMIT 100">>)),
+    {ok, Events} = neo4j_utils:transform_cypher_result(
+			neo4j:cypher(Context#context.neo,
+				<<"MATCH ((e:EVENT) <-- (s:SEASON)) RETURN ID(e) AS id, e.name AS name, s.year AS year, e.venueCity AS venueCity, e.venueCountry AS venueCountry ORDER BY s.year DESC, ID(e) DESC LIMIT 100">>
+		)),
 
     {ok, Content} = events_index_dtl:render([
 	    {events, Events}
@@ -46,9 +49,9 @@ to_html(ReqData, Context) when Context#context.action == index_or_create ->
     {Content, ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == show_or_update ->
-    {erlang:iolist_to_binary([<<"<pre>">>, 
-				  mochiweb_html:escape(lists:flatten(io_lib:format("~80p", [Context#context.event]))), 
-				  <<"</pre>">>]), 
+    {erlang:iolist_to_binary([<<"<pre>">>,
+				  mochiweb_html:escape(lists:flatten(io_lib:format("~80p", [Context#context.event]))),
+				  <<"</pre>">>]),
 	 ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == new ->
