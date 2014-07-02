@@ -49,4 +49,4 @@ RaceMan is reloading changed `.beam` files in development mode by using [mochiwe
 
 Example Data
 ------------
-To add some example data to your database use the cypher statement in [example.cypher].
+To add some example data to your database use the cypher statement in [example.cypher](example.cypher).
