@@ -22,12 +22,15 @@ resource_exists(ReqData, Context) ->
 				{error, _Reason} ->
 					{false, ReqData, Context};
 				{Id, _Rest} ->
-					Node = neo4j:get_node(Context#context.neo, Id),
-					case Node of
-						{error, not_found} ->
-							{false, ReqData, Context};
-						_Else ->
-						  {true, ReqData, Context#context{action=show_or_update, event=Node}}
+				  case neo4j_utils:transform_cypher_result(
+						neo4j:cypher(Context#context.neo,
+							<<"START e=node({id}) MATCH (s:Season)-->e-->(city:City)-->(country:Country) RETURN ID(e) AS id, e.name AS name, s.year AS year, city.name AS venueCity, country.name AS venueCountry">>,
+							[{<<"id">>, Id}]
+					)) of 
+					{ok, [Event|_]} ->
+						{true, ReqData, Context#context{action=show_or_update, event=Event}};
+					_ ->
+						{false, ReqData, Context}
 					end
 			end;
 		false ->
@@ -49,10 +52,17 @@ to_html(ReqData, Context) when Context#context.action == index_or_create ->
     {Content, ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == show_or_update ->
-    {erlang:iolist_to_binary([<<"<pre>">>,
-				  mochiweb_html:escape(lists:flatten(io_lib:format("~80p", [Context#context.event]))),
-				  <<"</pre>">>]),
-	 ReqData, Context};
+
+		{ok, Races} = neo4j_utils:transform_cypher_result(
+			neo4j:cypher(Context#context.neo,
+				<<"START e=node({id}) MATCH e-->(r:Race) RETURN ID(r) AS id, r.name AS boatClass">>,
+				[{<<"id">>, proplists:get_value(<<"id">>, Context#context.event)}]
+		)),
+    {ok, Content} = events_show_dtl:render([
+	    {event, Context#context.event},
+	    {races, Races}
+	  ]),
+    {Content, ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == new ->
     {<<"TODO">>, ReqData, Context}.

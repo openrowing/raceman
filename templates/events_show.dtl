@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>{{ event.name }}</h1>
+    <p>
+      {{ event.year }} in {{ event.venueCity }}/{{ event.venueCountry }}
+    </p>
+    <h3>Bootsklassen</h3>
+    <ul>
+      {% for race in races %}
+        <li>{{ race.boatClass }}</li>
+      {% empty %}
+        <li>Keine Bootsklassen gefunden</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+{% endblock  %}
