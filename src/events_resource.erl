@@ -40,7 +40,7 @@ to_html(ReqData, Context) when Context#context.action == index_or_create ->
 
     {ok, Events} = neo4j_utils:transform_cypher_result(
 			neo4j:cypher(Context#context.neo,
-				<<"MATCH ((e:EVENT) <-- (s:SEASON)) RETURN ID(e) AS id, e.name AS name, s.year AS year, e.venueCity AS venueCity, e.venueCountry AS venueCountry ORDER BY s.year DESC, ID(e) DESC LIMIT 100">>
+				<<"MATCH (s:Season)-->(e:Event)-->(city:City)-->(country:Country) RETURN ID(e) AS id, e.name AS name, s.year AS year, city.name AS venueCity, country.name AS venueCountry ORDER BY s.year DESC LIMIT 100">>
 		)),
 
     {ok, Content} = events_index_dtl:render([
