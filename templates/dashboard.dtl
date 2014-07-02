@@ -6,7 +6,7 @@
 
  <div class="container">
   <div class="jumbotron">
-   <h1>RaceManager: Bestzeiten in Echtzeit.</h1>
+   <h1>RaceMan: Bestzeiten in Echtzeit.</h1>
 
    <p><a class="btn btn-primary btn-lg" role="button" href="/events">Amaze me</a></p>
   </div> 
