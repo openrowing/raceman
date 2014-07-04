@@ -41,13 +41,27 @@ resource_exists(ReqData, Context) ->
 
 to_html(ReqData, Context) when Context#context.action == index_or_create ->
 
+		Page = 
+		  case string:to_integer(wrq:get_qs_value("page", "1", ReqData)) of
+		  	{error, _} -> 1;
+		  	{P, _} -> 
+			  	if
+			  		P < 1 -> 1;
+			  		true -> P
+			  	end
+		  end,
+		{PageSize, _} = string:to_integer(wrq:get_qs_value("size", "30", ReqData)),
+
     {ok, Events} = neo4j_utils:transform_cypher_result(
 			neo4j:cypher(Context#context.neo,
-				<<"MATCH (s:Season)-->(e:Event)-->(city:City)-->(country:Country) RETURN ID(e) AS id, e.name AS name, s.year AS year, city.name AS venueCity, country.name AS venueCountry ORDER BY s.year DESC LIMIT 100">>
+				<<"MATCH (s:Season)-->(e:Event)-->(city:City)-->(country:Country) RETURN ID(e) AS id, e.name AS name, s.year AS year, city.name AS venueCity, country.name AS venueCountry ORDER BY s.year DESC SKIP {pageSkip} LIMIT {pageSize}">>,
+				[{<<"pageSkip">>, (Page - 1) * PageSize},{<<"pageSize">>, PageSize}]
 		)),
 
     {ok, Content} = events_index_dtl:render([
-	    {events, Events}
+	    {events, Events},
+	    {nextPage, Page + 1},
+	    {prevPage, Page - 1}
 	  ]),
     {Content, ReqData, Context};
 

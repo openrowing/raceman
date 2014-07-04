@@ -11,10 +11,22 @@
         {% for event in events %}
           <li><a href="/events/{{ event.id }}">{{ event.name }}</a> ({{ event.year }} in {{ event.venueCity }}/{{ event.venueCountry }})</li>
         {% empty %}
-          <li>Keine Regatten aktiv</li>
+          <li>Mehr gibt es leider nicht.</li>
         {% endfor %}
       </ul>
     </p>
+    <ul class="pagination">
+      {% if prevPage < 1 %}
+        <li class="disabled"><a href="#">&laquo;</a></li>
+      {% else %}
+        <li><a href="/events?page={{prevPage}}">&laquo;</a></li>
+      {% endif %}
+      {% if events|length < 30 or events|length == 0 %}
+        <li class="disabled"><a href="#">&raquo;</a></li>
+      {% else %}
+        <li><a href="/events?page={{nextPage}}">&raquo;</a></li>
+      {% endif %}
+    </ul>
   </div>
 
 {% endblock  %}
