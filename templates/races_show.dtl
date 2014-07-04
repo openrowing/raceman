@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}{{ boatClass }}{% endblock %}
+{% block title %}{{ event.name }}: {{ boatClass }}{% endblock %}
 
 {% block content %}
 
