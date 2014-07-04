@@ -6,23 +6,32 @@
 
   <div class=container>
     <h1>Saisonübersicht</h1>
-    <form method="GET" action="/season">
-      <dl class="dl-horizontal">
-        <dt>Jahr:</dt><dd>
-          <select name="year">
+    <form method="GET" action="/season" class="form-horizontal">
+      <div class="form-group">
+        <label for="year" class="col-sm-2 control-label">Jahr</label>
+        <div class="col-sm-10">
+          <select name="year" class="form-control">
             {% for y in years %}
               <option value="{{ y.year }}" {% if y.year == year %}selected{% endif %}>{{ y.year }}</option>
             {% endfor %}
           </select>
-        </dd>
-        <dt>Bootsklasse:</dt><dd>
-          <select name="class">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="year" class="col-sm-2 control-label">Bootsklasse</label>
+        <div class="col-sm-10">
+          <select name="class" class="form-control">
             {% for c in classes %}
               <option value="{{ c.class }}" {% if c.class == boatClass %}selected{% endif %}>{{ c.class }}</option>
             {% endfor %}
           </select></dd>
-      </dl>
-      <input type="submit" value="Aktualisieren"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">Aktualisieren"</button>
+        </div>
+      </div>
     </form>
     <h4>Länder sortiert nach Erfolg</h4>
     <table class="table table-striped table-condensed table-bordered">

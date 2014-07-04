@@ -7,20 +7,33 @@
   <div class=container>
     <h1>Saisonübersicht</h1>
     <p>
-      Jahr und Bootsklasse wählen:
-      <form method="GET" action="/season">
-        <select name="year">
-          {% for y in years %}
-            <option value="{{ y.year }}">{{ y.year }}</option>
-          {% endfor %}
-        </select>
-        <select name="class">
-          {% for c in classes %}
-            <option value="{{ c.class }}">{{ c.class }}</option>
-          {% endfor %}
-        </select>
-        <input type="submit" value="Übersicht erstellen"/>
-      </form>
+      <form method="GET" action="/season" class="form-horizontal">
+      <div class="form-group">
+        <label for="year" class="col-sm-2 control-label">Jahr</label>
+        <div class="col-sm-10">
+          <select name="year" class="form-control">
+            {% for y in years %}
+              <option value="{{ y.year }}">{{ y.year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="year" class="col-sm-2 control-label">Bootsklasse</label>
+        <div class="col-sm-10">
+          <select name="class" class="form-control">
+            {% for c in classes %}
+              <option value="{{ c.class }}">{{ c.class }}</option>
+            {% endfor %}
+          </select></dd>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">Übersicht erstellen"</button>
+        </div>
+      </div>
+    </form>
     </p>
   </div>
 
