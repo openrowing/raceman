@@ -22,7 +22,7 @@
             <td>{{ b.rank }}</td>
             <td>{{ b.boat }}</td>
             <td>{{ b.time }}</td>
-            <td><a href="/countries/{{ b.country }}">{{ b.country }}</a></td>
+            <td><a href="/countries/{{ b.country }}/class/{{ boatClass }}">{{ b.country }}</a></td>
           </tr>
         {% endfor %}
         </tbody>
