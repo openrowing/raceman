@@ -56,7 +56,7 @@ to_html(ReqData, Context) when Context#context.action == show_class_index ->
 to_html(ReqData, Context) when Context#context.action == show_class ->
 	  {ok, Events} = neo4j_utils:transform_cypher_result(
 			neo4j:cypher(Context#context.neo,
-				<<"MATCH (c:Country) WHERE c.name = {code} MATCH c--(b:Boat)--(:Final)--(r:Race) WHERE r.name={boatClass} WITH r, count(b) as boatCount MATCH r--(e:Event)--(s:Season) RETURN boatCount, {name: e.name, id: ID(e), year: s.year} as event ORDER BY s.year desc, e.name">>,
+				<<"MATCH (c:Country) WHERE c.name = {code} MATCH c--(b:Boat)--(f:Final)--(r:Race) WHERE r.name={boatClass} OPTIONAL MATCH f<-[:NEXT_FINAL*1..]-(:Final)-->(prev:Boat) WITH r, count(prev) + b.position AS rank ORDER BY rank WITH r, STR(collect(rank)) as ranks MATCH r--(e:Event)--(s:Season) RETURN ranks, {name: e.name, id: ID(e), year: s.year} as event ORDER BY s.year desc, e.name">>,
 				[{<<"code">>, list_to_binary(Context#context.country)}, {<<"boatClass">>, list_to_binary(Context#context.boatClass)}]
 			)),
     {ok, Content} = countries_boat_class_dtl:render([

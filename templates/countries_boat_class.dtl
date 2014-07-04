@@ -15,7 +15,7 @@
       <ul>
         {% for e in events %}
           <li>
-            <a href="/races/{{ e.event.id }}/class/{{ boatClass }}">{{ e.event.name }}</a> (Anzahl der Boote: {{ e.boatCount}})
+            <a href="/races/{{ e.event.id }}/class/{{ boatClass }}">{{ e.event.name }}</a> (Ränge: {{ e.ranks}})
           </li>
         {% empty %}
           <li>Keine Events mit dieser Bootsklasse gefunden.</li>
