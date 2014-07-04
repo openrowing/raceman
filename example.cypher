@@ -232,42 +232,45 @@ WITH
 ]
 as races
 WITH races, 
-EXTRACT(i in RANGE(0,LENGTH(races)-2) | {src: races[i], dest: races[i+1]}) as finalOrder 
+EXTRACT(i in RANGE(0,LENGTH(races)-2) | {src: races[i], dest: races[i+1]}) as finalOrder,
+HEAD(races) AS common,
+HEAD(HEAD(races).positions).details as checkpoints 
+MERGE (s:Season {year: TOINT(common.year)})
+MERGE (e:Event {name: common.event, type: common.eventType})
+MERGE (venueCountry:Country {name: common.venueCountry})
+MERGE (venueCity:City {name: common.venueCity})
+CREATE UNIQUE e-[:VENUE_CITY]->venueCity-[:PART_OF]->venueCountry
+CREATE UNIQUE s-[:TAKES_PLACE]->e
+CREATE e-[:RACES]->(r:Race {name: common.boatClass})
+WITH distinct r, common, races, finalOrder, checkpoints
+FOREACH (cp IN checkpoints | 
+  CREATE r-[:CHECKPOINTS]->(c:Checkpoint {distance: cp.distance})
+)
 FOREACH (race in races | 
-  MERGE (s:Season {year: race.year})-[:TAKES_PLACE]->(e:Event {name: race.event})
-  MERGE e-[:VENUE_CITY]->(venueCity:City {name: race.venueCity})-[:PART_OF]->(venueCountry:Country {name: race.venueCountry})
-  MERGE e-[:RACES]->(r:Race {name: race.boatClass})
-  CREATE r-[:FINALS]->(fi:Final {name: race.race, date: race.date})
+ CREATE r-[:FINALS]->(fi:Final {name: race.race, date: race.date})
   FOREACH (b IN race.positions | 
-    MERGE (country:Country {name: b.country}) 
-    CREATE fi-[:BOATS]->(boat:Boat {name: b.boat})-[:FOR]->country
-    FOREACH (c IN b.crew | 
-      MERGE (p:Person {name: c.name})
-      CREATE boat-[:MEMBER {position: c.position}]->p
-    )
-    FOREACH (d in b.details |
-      MERGE r-[:CHECKPOINTS]-(c:Checkpoint {distance: d.distance})
-      CREATE boat-[:MEASUREMENT {position: TOINT(d.position), time: d.time}]->c
-    )
-  )
+   MERGE (country:Country {name: b.country}) 
+   CREATE fi-[:BOATS]->(boat:Boat {name: b.boat, position: b.rank, time: b.time})-[:FOR]->country
+   FOREACH (c IN b.crew | 
+     MERGE (p:Person {name: c.name})
+     CREATE UNIQUE boat-[:MEMBER]->p
+   )
+   FOREACH (d in b.details |
+     CREATE UNIQUE r-[:CHECKPOINTS]->(c:Checkpoint {distance: d.distance})
+     CREATE boat-[:MEASUREMENT {position: TOINT(d.position), time: d.time}]->c
+   )
+ )
 )
 FOREACH (p IN finalOrder | 
-    MERGE (r:Race {name: p.src.boatClass})-[:FINALS]->(f1:Final {name: p.src.race})
-    MERGE (r:Race {name: p.dest.boatClass})-[:FINALS]->(f2:Final {name: p.dest.race})
-    CREATE f1-[:NEXT_FINAL]->f2)
-WITH HEAD(races) as race
-WITH race, 
-HEAD(race.positions).details as checkpoints
-WITH race, checkpoints,
-LAST(checkpoints).distance as finish, 
+ CREATE UNIQUE r-[:FINALS]->(f1:Final {name: p.src.race, date: p.src.date})
+ CREATE UNIQUE r-[:FINALS]->(f2:Final {name: p.dest.race, date: p.dest.date})
+ CREATE UNIQUE f1-[:NEXT_FINAL]->f2)
+WITH r, checkpoints, LAST(checkpoints).distance as finish, 
 EXTRACT(i in RANGE(0,LENGTH(checkpoints)-2) | {src: checkpoints[i], dest: checkpoints[i+1]}) as checkpointOrder
-MATCH (r:Race {name: race.boatClass})-[:CHECKPOINTS]-(c:Checkpoint {distance: finish})
+MATCH r-[:CHECKPOINTS]-(c:Checkpoint {distance: finish})
 SET c :Finish
 FOREACH (cp IN checkpointOrder | 
-  MERGE (r:Race {name: race.boatClass})-[:CHECKPOINTS]-(src:Checkpoint {distance: cp.src.distance})
-  MERGE (r:Race {name: race.boatClass})-[:CHECKPOINTS]-(dest:Checkpoint {distance: cp.dest.distance})
-  CREATE src-[:NEXT_CHECKPOINT]->dest
-)
-WITH race
-MATCH (r:Race) WHERE r.name=race.boatClass
-RETURN r
+ CREATE UNIQUE r-[:CHECKPOINTS]->(src:Checkpoint {distance: cp.src.distance})
+ CREATE UNIQUE r-[:CHECKPOINTS]->(dest:Checkpoint {distance: cp.dest.distance})
+ CREATE UNIQUE src-[:NEXT_CHECKPOINT]->dest
+);
