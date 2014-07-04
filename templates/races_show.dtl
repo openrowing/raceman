@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ boatClass }}{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1><a href="/events/{{ event.id }}">{{ event.name }}</a>: {{ boatClass }}</h1>
+    <p>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Boot</th>
+            <th>Zeit</th>
+            <th>Nation</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for b in boats %}
+          <tr>
+            <td>{{ b.rank }}</td>
+            <td>{{ b.boat }}</td>
+            <td>{{ b.time }}</td>
+            <td><a href="/countries/{{ b.country }}">{{ b.country }}</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </p>
+  </div>
+
+{% endblock  %}

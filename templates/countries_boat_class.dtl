@@ -1,0 +1,27 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ country }}{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>{{ country }}</h1>
+    <ul class="nav nav-tabs" role="tablist">
+      <li><a href="/countries/{{ country }}">Events</a></li>
+      <li><a href="/countries/{{ country }}/boats">Bootsklassen</a></li>
+      <li class="active"><a href="/countries/{{ country }}/boats/{{ boatClass }}">{{ boatClass }}</a></li>
+    </ul>
+    <p>
+      <ul>
+        {% for e in events %}
+          <li>
+            <a href="/races/{{ e.event.id }}/class/{{ boatClass }}">{{ e.event.name }}</a> (Anzahl der Boote: {{ e.boatCount}})
+          </li>
+        {% empty %}
+          <li>Keine Events mit dieser Bootsklasse gefunden.</li>
+        {% endfor %}
+      </ul>
+    </p>
+  </div>
+
+{% endblock  %}

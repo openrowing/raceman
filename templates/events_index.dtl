@@ -19,12 +19,12 @@
       {% if prevPage < 1 %}
         <li class="disabled"><a href="#">&laquo;</a></li>
       {% else %}
-        <li><a href="/events?page={{prevPage}}">&laquo;</a></li>
+        <li><a href="/events?page={{ prevPage }}">&laquo;</a></li>
       {% endif %}
       {% if events|length < 30 or events|length == 0 %}
         <li class="disabled"><a href="#">&raquo;</a></li>
       {% else %}
-        <li><a href="/events?page={{nextPage}}">&raquo;</a></li>
+        <li><a href="/events?page={{ nextPage }}">&raquo;</a></li>
       {% endif %}
     </ul>
   </div>

@@ -12,7 +12,7 @@
     <h3>Bootsklassen</h3>
     <ul>
       {% for race in races %}
-        <li>{{ race.boatClass }}</li>
+        <li><a href="/races/{{ event.id }}/class/{{ race.boatClass }}">{{ race.boatClass }}</a></li>
       {% empty %}
         <li>Keine Bootsklassen gefunden</li>
       {% endfor %}
