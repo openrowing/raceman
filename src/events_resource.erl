@@ -69,7 +69,7 @@ to_html(ReqData, Context) when Context#context.action == show_or_update ->
 
 		{ok, Races} = neo4j_utils:transform_cypher_result(
 			neo4j:cypher(Context#context.neo,
-				<<"START e=node({id}) MATCH e-->(r:Race) RETURN ID(r) AS id, r.name AS boatClass">>,
+				<<"START e=node({id}) MATCH e-->(r:Race) RETURN ID(r) AS id, r.name AS boatClass ORDER BY boatClass">>,
 				[{<<"id">>, proplists:get_value(<<"id">>, Context#context.event)}]
 		)),
     {ok, Content} = events_show_dtl:render([
