@@ -1,0 +1,86 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Saisonübersicht{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>Saisonübersicht</h1>
+    <form method="GET" action="/season">
+      <dl class="dl-horizontal">
+        <dt>Jahr:</dt><dd>
+          <select name="year">
+            {% for y in years %}
+              <option value="{{ y.year }}" {% if y.year == year %}selected{% endif %}>{{ y.year }}</option>
+            {% endfor %}
+          </select>
+        </dd>
+        <dt>Bootsklasse:</dt><dd>
+          <select name="class">
+            {% for c in classes %}
+              <option value="{{ c.class }}" {% if c.class == boatClass %}selected{% endif %}>{{ c.class }}</option>
+            {% endfor %}
+          </select></dd>
+      </dl>
+      <input type="submit" value="Aktualisieren"/>
+    </form>
+    <h4>Länder sortiert nach Erfolg</h4>
+    <table class="table table-striped table-condensed table-bordered">
+      <thead>
+        <tr>
+          <th>Land</th>
+          {% for e in events %}
+            <th><a href="/races/{{ e.event.id }}/class/{{ boatClass }}">{{ e.event.name }}</a></th>
+          {% endfor %}
+          <th>&Oslash;-Rang</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in countriesByRank %}
+          <tr>
+            <td><a href="/countries/{{ c.country }}/class/{{ boatClass }}">{{ c.country }}</a></td>
+            {% for e in events %}
+              <td>
+              {% for eventCountry in e.countries %}
+                {% if c.country == eventCountry.country %}
+                  {{ eventCountry.ranks }}
+                {% endif %}
+              {% endfor %}
+              </td>
+            {% endfor %}
+            <td>{{ c.averageRank|floatformat }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h4>Länder in alphabetischer Sortierung</h4>
+    <table class="table table-striped table-condensed table-bordered">
+      <thead>
+        <tr>
+          <th>Land</th>
+          {% for e in events %}
+            <th><a href="/races/{{ e.event.id }}/class/{{ boatClass }}">{{ e.event.name }}</a></th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in countries %}
+          <tr>
+            <td><a href="/countries/{{ c.country }}/class/{{ boatClass }}">{{ c.country }}</a></td>
+            {% for e in events %}
+              <td>
+              {% for eventCountry in e.countries %}
+                {% if c.country == eventCountry.country %}
+                  {{ eventCountry.ranks }}
+                {% endif %}
+              {% endfor %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+{% endblock  %}

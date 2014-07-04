@@ -1,0 +1,27 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Saisonübersicht{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>Saisonübersicht</h1>
+    <p>
+      Jahr und Bootsklasse wählen:
+      <form method="GET" action="/season">
+        <select name="year">
+          {% for y in years %}
+            <option value="{{ y.year }}">{{ y.year }}</option>
+          {% endfor %}
+        </select>
+        <select name="class">
+          {% for c in classes %}
+            <option value="{{ c.class }}">{{ c.class }}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" value="Übersicht erstellen"/>
+      </form>
+    </p>
+  </div>
+
+{% endblock  %}
