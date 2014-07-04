@@ -29,15 +29,14 @@
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default">Aktualisieren"</button>
+          <button type="submit" class="btn btn-primary">Aktualisieren</button>
         </div>
       </div>
     </form>
-    <h4>Länder sortiert nach Erfolg</h4>
     <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
-          <th>Land</th>
+          <th>Land (nach &Oslash;-Rang)</th>
           {% for e in events %}
             <th><a href="/races/{{ e.event.id }}/class/{{ boatClass }}">{{ e.event.name }}</a></th>
           {% endfor %}
@@ -62,11 +61,10 @@
         {% endfor %}
       </tbody>
     </table>
-    <h4>Länder in alphabetischer Sortierung</h4>
     <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
-          <th>Land</th>
+          <th>Land (alphabetisch)</th>
           {% for e in events %}
             <th><a href="/races/{{ e.event.id }}/class/{{ boatClass }}">{{ e.event.name }}</a></th>
           {% endfor %}
