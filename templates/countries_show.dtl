@@ -1,0 +1,29 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ country }}{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>{{ country }}</h1>
+    <p>
+      <ul>
+        {% for c in cities %}
+          <li>
+            {{c.city}}
+            <ul>
+              {% for e in c.events %}
+                <li><a href="/events/{{e.id}}">{{e.name}}</a></li>
+              {% empty %}
+                <li>Keine Events gefunden.</li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% empty %}
+          <li>Keine Orte/Events gefunden.</li>
+        {% endfor %}
+      </ul>
+    </p>
+  </div>
+
+{% endblock  %}
