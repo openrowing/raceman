@@ -13,11 +13,7 @@ content_types_provided(ReqData, Context) ->
     {[{"text/html", to_html}],ReqData, Context}.
 
 to_html(ReqData, Context) ->
-    Neo = neo4j:connect([{base_uri, <<"http://localhost:7474/db/data/">>}]),
-
-    Node = neo4j:get_node(Neo, 0),
-
-    {ok, Content} = dashboard_dtl:render(neo4j:get_node_properties(Node)),
+    {ok, Content} = dashboard_dtl:render(),
     {Content, ReqData, Context}.
 
 -include_lib("eunit/include/eunit.hrl").

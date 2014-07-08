@@ -7,55 +7,62 @@
 -record(context, {neo, action, event}).
 
 init(_Config) ->
-	Neo = neo4j:connect([{base_uri, <<"http://localhost:7474/db/data/">>}]),
-    {ok, #context{neo = Neo}}.
+  Neo = neo4j:connect([{base_uri, <<"http://localhost:7474/db/data/">>}]),
+  {ok, #context{neo = Neo}}.
 
 content_types_provided(ReqData, Context) ->
-    {[{"text/html", to_html}], ReqData, Context}.
+  {[{"text/html", to_html}], ReqData, Context}.
 
 resource_exists(ReqData, Context) ->
-	case lists:keyfind(action_or_id, 1, wrq:path_info(ReqData)) of
-		{action_or_id, "new"} ->
-			{true, ReqData, Context#context{action=new}};
-		{action_or_id, Str} ->
-			case string:to_integer(Str) of
-				{error, _Reason} ->
-					{false, ReqData, Context};
-				{Id, _Rest} ->
-					Node = neo4j:get_node(Context#context.neo, Id),
-					case Node of
-						{error, not_found} ->
-							{false, ReqData, Context};
-						_Else ->
-						  {true, ReqData, Context#context{action=show_or_update, event=Node}}
-					end
-			end;
-		false ->
-			{true, ReqData, Context#context{action=index_or_create}};
-		_Else ->
-			{false, ReqData, Context}
-	end.
+  case lists:keyfind(action_or_id, 1, wrq:path_info(ReqData)) of
+	{action_or_id, "new"} ->
+	  {true, ReqData, Context#context{action=new}};
+	{action_or_id, Str} ->
+	  case string:to_integer(Str) of
+		{error, _Reason} ->
+		  {false, ReqData, Context};
+		{Id, _Rest} ->
+		  Node = neo4j:get_node(Context#context.neo, Id),
+		  case Node of
+			{error, not_found} ->
+			  {false, ReqData, Context};
+			_Else ->
+			  {true, ReqData, Context#context{action=show_or_update, event=neo4j_utils:props(Id, Node)}}
+		  end
+	  end;
+	false ->
+	  {true, ReqData, Context#context{action=index_or_create}};
+	_Else ->
+	  {false, ReqData, Context}
+  end.
 
 to_html(ReqData, Context) when Context#context.action == index_or_create ->
-
-    {ok, Events} = neo4j_utils:transform_cypher_result(
-			neo4j:cypher(Context#context.neo,
-				<<"MATCH ((e:EVENT) <-- (s:SEASON)) RETURN ID(e) AS id, e.name AS name, s.year AS year, e.venueCity AS venueCity, e.venueCountry AS venueCountry ORDER BY s.year DESC, ID(e) DESC LIMIT 100">>
-		)),
-
-    {ok, Content} = events_index_dtl:render([
-	    {events, Events}
-	  ]),
-    {Content, ReqData, Context};
+  
+  {ok, Events} = neo4j_utils:transform_cypher_result(
+				   neo4j:cypher(Context#context.neo,
+								<<"MATCH (s:Season) --> (e:Event) -[:VENUE_CITY]-> (c:City) --> (cntry:Country) RETURN ID(e) AS id, e.name AS name, s.year AS year, c.name AS venueCity, cntry.name AS venueCountry ORDER BY s.year DESC, ID(e) DESC LIMIT 100">>
+							   )),
+  
+  {ok, Content} = events_index_dtl:render([{events, Events}]),
+  {Content, ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == show_or_update ->
-    {erlang:iolist_to_binary([<<"<pre>">>,
-				  mochiweb_html:escape(lists:flatten(io_lib:format("~80p", [Context#context.event]))),
-				  <<"</pre>">>]),
-	 ReqData, Context};
+  {ok, Results} = neo4j_utils:transform_cypher_result(
+				   neo4j:cypher(Context#context.neo,
+								<<"MATCH (e:Event) --> (r:Race) --> (f:Final) WHERE ID(e) = 133991 RETURN ID(f) AS finalId, r.name AS raceName, f.name AS finalName, f.date AS startDate ORDER BY f.date DESC  LIMIT 10">>
+							   )),
+
+    {ok, Startlists} = neo4j_utils:transform_cypher_result(
+				   neo4j:cypher(Context#context.neo,
+								<<"MATCH (e:Event) --> (r:Race) --> (f:Final) WHERE ID(e) = 133991 RETURN ID(f) AS finalId, r.name AS raceName, f.name AS finalName, f.date AS startDate ORDER BY f.date DESC  LIMIT 10">>
+							   )),
+
+  
+   {ok, Content} = event_show_dtl:render([{event, Context#context.event}, {results, Results}, {startlists, Startlists}]),
+   {Content, ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == new ->
-    {<<"TODO">>, ReqData, Context}.
+  {<<"TODO">>, ReqData, Context}.
 
 -include_lib("eunit/include/eunit.hrl").
 -ifdef(TEST).
