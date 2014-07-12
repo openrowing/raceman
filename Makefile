@@ -29,6 +29,9 @@ app: deps
 
 quick:
 	@$(REBAR) compile skip_deps=true
+	
+quick_clean:
+	@$(REBAR) clean skip_deps=true
 
 deps:
 	@$(REBAR) get-deps

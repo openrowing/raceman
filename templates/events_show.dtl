@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>{{ event.name }}</h1>
+    <p>
+      {{ event.year }} in {{ event.venueCity }}/<a href="/countries/{{ event.venueCountry }}">{{ event.venueCountry }}</a>
+    </p>
+    <h3>Bootsklassen</h3>
+    <ul>
+      {% for race in races %}
+        <li><a href="/races/{{ event.id }}/class/{{ race.boatClass }}">{{ race.boatClass }}</a></li>
+      {% empty %}
+        <li>Keine Bootsklassen gefunden</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+{% endblock  %}

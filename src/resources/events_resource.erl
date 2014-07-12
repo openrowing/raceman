@@ -38,28 +38,31 @@ resource_exists(ReqData, Context) ->
 
 to_html(ReqData, Context) when Context#context.action == index_or_create ->
   
+  {Page, PageSize} = wrq_utils:page_and_page_size(ReqData),
+  
   {ok, Events} = neo4j_utils:transform_cypher_result(
 				   neo4j:cypher(Context#context.neo,
-								<<"MATCH (s:Season) --> (e:Event) -[:VENUE_CITY]-> (c:City) --> (cntry:Country) RETURN ID(e) AS id, e.name AS name, s.year AS year, c.name AS venueCity, cntry.name AS venueCountry ORDER BY s.year DESC, ID(e) DESC LIMIT 100">>
+								<<"MATCH (s:Season)-->(e:Event)-->(city:City)-->(country:Country) RETURN ID(e) AS id, e.name AS name, s.year AS year, city.name AS venueCity, country.name AS venueCountry ORDER BY s.year DESC SKIP {pageSkip} LIMIT {pageSize}">>,
+								[{<<"pageSkip">>, (Page - 1) * PageSize},{<<"pageSize">>, PageSize}]
 							   )),
   
-  {ok, Content} = events_index_dtl:render([{events, Events}]),
+  {ok, Content} = events_index_dtl:render([{events, Events},
+										   {nextPage, Page + 1},
+										   {prevPage, Page - 1}
+										  ]),
   {Content, ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == show_or_update ->
-  {ok, Results} = neo4j_utils:transform_cypher_result(
-				   neo4j:cypher(Context#context.neo,
-								<<"MATCH (e:Event) --> (r:Race) --> (f:Final) WHERE ID(e) = 133991 RETURN ID(f) AS finalId, r.name AS raceName, f.name AS finalName, f.date AS startDate ORDER BY f.date DESC  LIMIT 10">>
-							   )),
-
-    {ok, Startlists} = neo4j_utils:transform_cypher_result(
-				   neo4j:cypher(Context#context.neo,
-								<<"MATCH (e:Event) --> (r:Race) --> (f:Final) WHERE ID(e) = 133991 RETURN ID(f) AS finalId, r.name AS raceName, f.name AS finalName, f.date AS startDate ORDER BY f.date DESC  LIMIT 10">>
-							   )),
-
   
-   {ok, Content} = event_show_dtl:render([{event, Context#context.event}, {results, Results}, {startlists, Startlists}]),
-   {Content, ReqData, Context};
+  {ok, Races} = neo4j_utils:transform_cypher_result(
+				  neo4j:cypher(Context#context.neo,
+							   <<"START e=node({id}) MATCH e-->(r:Race) RETURN ID(r) AS id, r.name AS boatClass ORDER BY boatClass">>,
+							   [{<<"id">>, proplists:get_value(<<"id">>, Context#context.event)}]
+							  )),
+  {ok, Content} = events_show_dtl:render([{event, Context#context.event},
+										  {races, Races}
+										 ]),
+  {Content, ReqData, Context};
 
 to_html(ReqData, Context) when Context#context.action == new ->
   {<<"TODO">>, ReqData, Context}.

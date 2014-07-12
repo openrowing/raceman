@@ -37,11 +37,16 @@ Installation
         
 5. Open [http://localhost:8080/](http://localhost:8080/) in your browser.
 
-Beenden der laufenden Anwendung in der REPL mit `halt().`
+Stop the running application by typing `halt().` into the REPL.
 
 
 
 Development
 -----------
 
-ReaceMan is reloading changed `.beam` files in development mode by using [mochiweb's reloader implementation](http://code.google.com/p/mochiweb/source/browse/trunk/src/reloader.erl). This works for `.erl` and `.dtl` files but not for the `dispatch.conf`. You just need to compile the changes you made by running `rebar compile skip_deps=true` or `make quick`.
+RaceMan is reloading changed `.beam` files in development mode by using [mochiweb's reloader implementation](http://code.google.com/p/mochiweb/source/browse/trunk/src/reloader.erl). This works for `.erl` and `.dtl` files but not for the `dispatch.conf`. You just need to compile the changes you made by running `rebar compile skip_deps=true` or `make quick`.
+
+
+Example Data
+------------
+To add some example data to your database use the cypher statement in [example.cypher](example.cypher).

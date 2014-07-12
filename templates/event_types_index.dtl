@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Regatta-Typen{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>RegattaTypen</h1>
+    <p>
+      <ul>
+        {% for event_type in event_types %}
+          <li>
+            {{ event_type.name }} [
+            <a href="/event_types/{{ event_type.id }}/countries">L&auml;nder</a> |
+            <a href="/event_types/{{ event_type.id }}/boat_classes">Bootsklassen</a> ]
+          </li>
+        {% empty %}
+          <li>Keine Regatten vorhanden.</li>
+        {% endfor %}
+      </ul>
+    </p>
+    <ul class="pagination">
+      {% if prevPage < 1 %}
+        <li class="disabled"><a href="#">&laquo;</a></li>
+      {% else %}
+        <li><a href="/event_types?page={{ prevPage }}">&laquo;</a></li>
+      {% endif %}
+      {% if event_types|length < 30 or event_types|length == 0 %}
+        <li class="disabled"><a href="#">&raquo;</a></li>
+      {% else %}
+        <li><a href="/event_types?page={{ nextPage }}">&raquo;</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+{% endblock  %}
