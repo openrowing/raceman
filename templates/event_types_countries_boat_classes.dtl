@@ -7,14 +7,14 @@
   <div class=container>
     <h1>{{ country }}</h1>
     <ul class="nav nav-tabs" role="tablist">
-      <li><a href="/countries/{{ country }}">Events</a></li>
-      <li class="active"><a href="/countries/{{ country }}/boats">Bootsklassen</a></li>
+      <li><a href="/event_types/{{ event_type }}/countries/{{ country }}">Events</a></li>
+      <li class="active"><a href="/event_types/{{ event_type }}/countries/{{ country }}/boats">Bootsklassen</a></li>
     </ul>
     <p>
       <ul>
         {% for b in boats %}
           <li>
-            <a href="/countries/{{ country }}/class/{{ b.boatClass }}">{{ b.boatClass }}</a>
+            <a href="/event_types/{{ event_type }}/countries/{{ country }}/class/{{ b.boatClass }}">{{ b.boatClass }}</a>
           </li>
         {% empty %}
           <li>Keine Bootsklassen gefunden.</li>
