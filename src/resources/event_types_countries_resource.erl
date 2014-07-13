@@ -39,7 +39,7 @@ resource_exists(ReqData, Context) ->
 to_html(ReqData, Context) when Context#context.action == index ->
   {ok, Countries} = neo4j_utils:transform_cypher_result(
 					  neo4j:cypher(Context#context.neo,
-								   <<"MATCH (c:Country)--(b:Boat)--(f:Final)--(r:Race)--(e:Event) WHERE e.type = {event_type} RETURN DISTINCT c.name as country ORDER BY country">>,
+								   <<"MATCH (c:Country)--(:Boat)--(:Final)--(:Race)--(e:Event) WHERE e.type = {event_type} RETURN DISTINCT c.name as country ORDER BY country">>,
 								   [{<<"event_type">>, list_to_binary(Context#context.event_type)}]
 								  )),
   {ok, Content} = event_types_countries_dtl:render([{countries, Countries}, 
@@ -77,7 +77,7 @@ to_html(ReqData, Context) when Context#context.action == show_class ->
 to_html(ReqData, Context) when Context#context.action == show ->
   {ok, Events} = neo4j_utils:transform_cypher_result(
 				   neo4j:cypher(Context#context.neo,
-								<<"MATCH (c:Country)--(b:Boat)--(f:Final)--(r:Race)--(e:Event)--(s:Season) WHERE e.type={event_type} and c.name={code} WITH e.name as name, ID(e) as id, s.year as year, r.name AS boat_class ORDER BY year RETURN name, id, year, collect(boat_class) as boat_classes ORDER BY year DESC, name">>,
+								<<"MATCH (c:Country {name: {code}})--(b:Boat)--(f:Final)--(r:Race)--(e:Event {type: {event_type}})--(s:Season) WITH e.name as name, ID(e) as id, s.year as year, r.name AS boat_class ORDER BY year RETURN name, id, year, collect(boat_class) as boat_classes ORDER BY year DESC, name">>,
 								[{<<"event_type">>, list_to_binary(Context#context.event_type)},
 								 {<<"code">>, list_to_binary(Context#context.country)}]
 							   )),
