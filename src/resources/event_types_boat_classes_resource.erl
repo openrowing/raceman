@@ -52,7 +52,7 @@ to_html(ReqData, Context) when Context#context.action == show ->
 								[{<<"event_type">>, list_to_binary(Context#context.event_type)},
 								 {<<"boat_class">>, list_to_binary(Context#context.boat_class)}]
 							   )),
-  {ok, Content} = event_types_boat_class_show_dtl:render([{event_type, Context#context.event_type},
+  {ok, Content} = event_types_boat_class_dtl:render([{event_type, Context#context.event_type},
 														  {countries, CountriesAlpha},
 														  {countriesByRank, CountriesRank},
 														  {events, Events},
