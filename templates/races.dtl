@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ regatta.name }} - {{ event.name }}{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1><a href="/regattas/{{ regatta.id }}">{{ regatta.name }}</a>: {{ event.name }}</h1>
+    {% for race in results %}
+      <h3>{{race.race}}</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Nation</th>
+            <th>Boot</th>
+            <th>Ruderer</th>
+            {% for distance in distances %}
+              <th>{{distance}}m</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+        {% for b in race.boats %}
+          <tr>
+            <td>{{ b.position }}</td>
+            <td>{{ b.country }}</td>
+            <td>{{ b.name }}</td>
+            <td>{{ b.names|join: ", " }}</td>
+            {% for distance in distances %}
+              <td>
+                {% for time in b.times %}
+                  {% if time.distance == distance %}
+                    {{ time.time }}
+                  {% endif %}
+                {% endfor %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+  </div>
+
+{% endblock  %}

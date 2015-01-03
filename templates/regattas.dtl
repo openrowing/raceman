@@ -8,8 +8,8 @@
     <h1>Regatten</h1>
     <p>
       <ul>
-        {% for event in events %}
-          <li><a href="/events/{{ event.id }}">{{ event.name }}</a> ({{ event.year }} in {{ event.venueCity }}/<a href="/countries/{{ event.venueCountry }}">{{ event.venueCountry }}</a>)</li>
+        {% for regatta in regattas %}
+          <li><a href="/regattas/{{ regatta.id }}">{{ regatta.name }}</a> ({{ regatta.year }} in {{ regatta.venueCity }}/<a href="/countries/{{ regatta.venueCountry }}">{{ regatta.venueCountry }}</a>)</li>
         {% empty %}
           <li>Mehr gibt es leider nicht.</li>
         {% endfor %}
@@ -19,12 +19,12 @@
       {% if prevPage < 1 %}
         <li class="disabled"><a href="#">&laquo;</a></li>
       {% else %}
-        <li><a href="/events?page={{ prevPage }}">&laquo;</a></li>
+        <li><a href="/regattas?page={{ prevPage }}">&laquo;</a></li>
       {% endif %}
-      {% if events|length < 30 or events|length == 0 %}
+      {% if regattas|length < 30 or regattas|length == 0 %}
         <li class="disabled"><a href="#">&raquo;</a></li>
       {% else %}
-        <li><a href="/events?page={{ nextPage }}">&raquo;</a></li>
+        <li><a href="/regattas?page={{ nextPage }}">&raquo;</a></li>
       {% endif %}
     </ul>
   </div>

@@ -1,0 +1,52 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ regatta_type.name }} - Nationen{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <p>
+    <form method="GET" action="/regatta_types/{{ regatta_type.id }}/countries" class="form-horizontal">
+	  <div class="form-group">
+	    <label for="year" class="col-sm-2 control-label">Land ausw&auml;hlen</label>
+	    <div class="col-sm-10">
+	      <select name="country" class="form-control">
+	        {% for c in countries %}
+	        <option value="{{ c.country }}" {% if c.country == country %}selected="selected"{% endif %}>{{ c.country }}</option>
+	        {% endfor %}
+	      </select></dd>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="col-sm-offset-2 col-sm-10">
+	      <button type="submit" class="btn btn-primary">&Uuml;bersicht erstellen</button>
+	    </div>
+	  </div>
+	</form>
+	</p>
+
+    <h1>{{ regatta_type.name }} - {{ country }}</h1>
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="active"><a href="/regatta_types/{{ regatta_type.id }}/countries?country={{ country }}">Veranstaltungen</a></li>
+      <!--<li><a href="/regatta_types/{{ regatta_type.id }}/countries/boats?country={{ country }}">Bootsklassen</a></li>-->
+    </ul>
+    <p>
+      <ul>
+        {% for r in regattas %}
+          <li>
+            <a href="/regattas/{{ r.id }}">{{r.name}} ({{ r.year }})</a>
+            <ul>
+              {% for ev in r.events %}
+                <li><a href="/regattas/{{ r.id }}/events/{{ ev.id }}">{{ ev.name }}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% empty %}
+          <li>Keine Regatten gefunden.</li>
+        {% endfor %}
+      </ul>
+    </p>
+    
+  </div>
+
+{% endblock  %}

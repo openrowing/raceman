@@ -5,14 +5,14 @@
 {% block content %}
 
   <div class=container>
-    <h1>RegattaTypen</h1>
+    <h1>Regatta-Typen</h1>
     <p>
       <ul>
-        {% for event_type in event_types %}
+        {% for regatta_type in regatta_types %}
           <li>
-            {{ event_type.name }} [
-            <a href="/event_types/{{ event_type.id }}/countries">L&auml;nder</a> |
-            <a href="/event_types/{{ event_type.id }}/boat_classes">Bootsklassen</a> ]
+            {{ regatta_type.name }} [
+            <a href="/regatta_types/{{ regatta_type.id }}/countries">L&auml;nder</a> |
+            <a href="/regatta_types/{{ regatta_type.id }}/boat_classes">Bootsklassen</a> ]
           </li>
         {% empty %}
           <li>Keine Regatten vorhanden.</li>
@@ -23,12 +23,12 @@
       {% if prevPage < 1 %}
         <li class="disabled"><a href="#">&laquo;</a></li>
       {% else %}
-        <li><a href="/event_types?page={{ prevPage }}">&laquo;</a></li>
+        <li><a href="/regatta_types?page={{ prev_page }}">&laquo;</a></li>
       {% endif %}
-      {% if event_types|length < 30 or event_types|length == 0 %}
+      {% if regatta_types|length < 30 or regatta_types|length == 0 %}
         <li class="disabled"><a href="#">&raquo;</a></li>
       {% else %}
-        <li><a href="/event_types?page={{ nextPage }}">&raquo;</a></li>
+        <li><a href="/regatta_types?page={{ next_page }}">&raquo;</a></li>
       {% endif %}
     </ul>
   </div>

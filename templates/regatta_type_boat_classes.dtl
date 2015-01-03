@@ -1,0 +1,90 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ regatta_type.name }} - Bootsklassen&uuml;bersicht{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>{{ regatta_type.name }} - Bootsklassen&uuml;bersicht</h1>
+    <p>
+	<form method="GET" action="/regatta_types/{{ regatta_type.id }}/boat_classes" class="form-horizontal">
+	  <div class="form-group">
+	    <label for="year" class="col-sm-2 control-label">Bootsklasse</label>
+	    <div class="col-sm-10">
+	      <select name="boat_class" class="form-control">
+	        {% for c in boat_classes %}
+	        <option value="{{ c.class }}" {% if c.class == boat_class %}selected="selected"{% endif %}>{{ c.class }}</option>
+	        {% endfor %}
+	      </select></dd>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="col-sm-offset-2 col-sm-10">
+	      <button type="submit" class="btn btn-primary">&Uuml;bersicht erstellen</button>
+	    </div>
+	  </div>
+	</form>
+	</p>
+  
+    {% if boat_class %}
+	    <h4>L&auml;der nach &Oslash;-Rang</h4>
+	    <table class="table table-striped table-condensed table-bordered">
+	      <thead>
+	        <tr>
+	          <th></th>
+	          {% for e in events %}
+	            <th><a href="/regattas/{{ e.event.regattaId }}/events/{{ e.event.id }}">{{ e.event.name }} <small>({{ e.event.year }})</small></a></th>
+	          {% endfor %}
+	          <th>&Oslash;-Rang</th>
+	        </tr>
+	      </thead>
+	      <tbody>
+	        {% for c in countriesByRank %}
+	          <tr>
+	            <td><a href="/regatta_types/{{ regatta_type.id }}/countries?country={{ c.country }}">{{ c.country }}</a></td>
+	            {% for e in events %}
+	              <td>
+	              {% for eventCountry in e.countries %}
+	                {% if c.country == eventCountry.country %}
+	                  {{ eventCountry.ranks }}
+	                {% endif %}
+	              {% endfor %}
+	              </td>
+	            {% endfor %}
+	            <td>{{ c.averageRank|floatformat }}</td>
+	          </tr>
+	        {% endfor %}
+	      </tbody>
+	    </table>
+	    <h4>L&auml;nder (alphabetisch)</h4>
+	    <table class="table table-striped table-condensed table-bordered">
+	      <thead>
+	        <tr>
+	          <th></th>
+	          {% for e in events %}
+	            <th><a href="/regattas/{{ e.event.regattaId }}/events/{{ e.event.id }}">{{ e.event.name }} <small>({{ e.event.year }})</small></a></th>
+	          {% endfor %}
+	        </tr>
+	      </thead>
+	      <tbody>
+	        {% for c in countries %}
+	          <tr>
+	            <td><a href="/regatta_types/{{ regatta_type.id }}/countries?country={{ c.country }}">{{ c.country }}</a></td>
+	            {% for e in events %}
+	              <td>
+	              {% for eventCountry in e.countries %}
+	                {% if c.country == eventCountry.country %}
+	                  {{ eventCountry.ranks }}
+	                {% endif %}
+	              {% endfor %}
+	              </td>
+	            {% endfor %}
+	          </tr>
+	        {% endfor %}
+	      </tbody>
+	    </table>
+   {% endif %}
+
+  </div>
+
+{% endblock  %}

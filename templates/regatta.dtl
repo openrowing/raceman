@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ regatta.name }}{% endblock %}
+
+{% block content %}
+
+  <div class=container>
+    <h1>{{ regatta.name }}</h1>
+    <p>
+      {{ regatta.year }} in {{ regatta.venueCity }} ({{ regatta.venueCountry }})
+    </p>
+    <h2>Rennen</h2>
+    {% for event in events %}
+      <h5>
+        <a href="/regattas/{{ regatta.id }}/events/{{ event.id }}">{{ event.labelEn }} ({{ event.name }})</a><br />
+      </h5>
+      <ul>
+        {% for race_type in event.raceTypes %}
+          <li>
+            <a href="/regattas/{{regatta.id}}/events/{{event.id}}/{{race_type.type}}">
+              {{race_type.type|capfirst}}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% empty %}
+      <p>Keine Rennen gefunden</p>
+    {% endfor %}
+  </div>
+
+{% endblock  %}

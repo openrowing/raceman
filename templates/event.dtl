@@ -1,22 +1,20 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}{{ event.name }}{% endblock %}
+{% block title %}Regatten - {{regatta.name}} - {{event.name}}{% endblock %}
 
 {% block content %}
-
   <div class=container>
-    <h1>{{ event.name }}</h1>
-    <p>
-      {{ event.year }} in {{ event.venueCity }} ({{ event.venueCountry }})
-    </p>
-    <h3>Bootsklassen</h3>
-    <ul>
-      {% for race in races %}
-        <li><a href="/races/{{ event.id }}/class/{{ race.boatClass }}">{{ race.boatClass }}</a></li>
-      {% empty %}
-        <li>Keine Bootsklassen gefunden</li>
+    <h1>L&auml;ufe</h1>
+    {% for race_type in race_types %}
+      <h3><a href="/regattas/{{regatta.id}}/events/{{event.id}}/{{race_type.type}}">{{ race_type.type|capfirst }}</a></h3>
+      <ul>
+      {% for race in race_type.races %}
+        <li>{{ race.name }} ({{ race.date|date_from_ts: "d.m.Y G:i" }})</li>
       {% endfor %}
-    </ul>
+      </ul>
+    {% empty %}
+      <p>Es liegen keine L&auml;ufe f&uuml;r diese Rennklasse vor</p>
+    {% endfor %}
   </div>
 
 {% endblock  %}

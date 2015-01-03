@@ -1,10 +1,10 @@
--module(races_resource).
+-module(event_resource).
 
 -export([init/1, to_html/2, content_types_provided/2, resource_exists/2]).
 
 -include_lib("webmachine/include/webmachine.hrl").
 
--record(context, {neo, action, regatta, event, race_type}).
+-record(context, {neo, regatta, event}).
 
 init(_Config) ->
   Neo = neo4j:connect([{base_uri, <<"http://localhost:7474/db/data/">>}]),
@@ -22,17 +22,15 @@ resource_exists(ReqData, Context) ->
 		false ->
 		  {false, ReqData, Context};
 		Event ->
-     RaceType = list_to_binary(proplists:get_value(race_type, wrq:path_info(ReqData))),
-		    {true, ReqData, Context#context{regatta=Regatta,event=Event,race_type=RaceType}}
+		  {true, ReqData, Context#context{regatta=Regatta,event=Event}}
 	  end
   end.
 
 to_html(ReqData, Context) ->
-  {ok, Results, Distances} = race_service:load_results(Context#context.neo, Context#context.event, Context#context.race_type),
-  {ok, Content} = races_dtl:render([{results, Results},
+  RaceTypes = event_service:load_races(Context#context.neo, Context#context.event),
+  {ok, Content} = event_dtl:render([{race_types, RaceTypes},
 									{event, Context#context.event},
-									{regatta, Context#context.regatta},
-                  {distances, Distances}
+									{regatta, Context#context.regatta}
 								   ]),
   {Content, ReqData, Context}.
 

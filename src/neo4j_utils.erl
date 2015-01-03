@@ -1,30 +1,31 @@
 -module(neo4j_utils).
 
--export([transform_cypher_result/1, props/2]).
+-export([transform_cypher_result/1, props/2, query_with_optional_pagination/2]).
 
 props(Id, NodeProplist) ->
   lists:merge(proplists:get_value(<<"data">>, NodeProplist), [{<<"id">>, Id}]).
 
+%% Transforms a Neo4j Result set to a more erlang style list of proplists
+
 transform_cypher_result([{<<"columns">>, Columns}, {<<"data">>, Data}]) ->
-  {ok, lists:map(fun(Row) -> transform(Columns, Row) end, Data)};
+  {ok, lists:map(fun(Row) -> lists:zip(Columns, Row) end, Data)};
 
 transform_cypher_result([{columns, Columns}, {data, Data}]) ->
-  {ok, lists:map(fun(Row) -> transform(Columns, Row) end, Data)};
+  {ok, lists:map(fun(Row) -> lists:zip(Columns, Row) end, Data)};
 
 transform_cypher_result(_) ->
   false.
 
-transform([Column|Columns], [Item|Items]) ->
-  lists:append([{Column, Item}], transform(Columns, Items));
-
-transform([], []) ->
-  [];
-
-transform([_H|_T], []) ->
-  [];
-
-transform([], [_H|_T]) ->
-  [].
+%% Adds LIMIT and SKIP clauses to Query if Options contains {page_size, <<integer>>} and {page, <<integer>>}
+query_with_optional_pagination(Query, Options) ->
+  PageSize = proplists:get_value(page_size, Options, 0),
+  Page = proplists:get_value(page, Options, 1),
+  if
+    PageSize > 0 ->
+      <<Query/binary, " SKIP ", (list_to_binary(integer_to_list((Page - 1) * PageSize)))/binary, " LIMIT ", (list_to_binary(integer_to_list(PageSize)))/binary>>;
+      true ->
+        Query
+  end.
 
 -ifdef(TEST).
 

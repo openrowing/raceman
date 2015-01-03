@@ -1,4 +1,4 @@
--module(event_types_countries_resource).
+-module(regatta_type_country_resource).
 
 -export([init/1, to_html/2, content_types_provided/2, resource_exists/2]).
 
