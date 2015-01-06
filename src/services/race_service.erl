@@ -35,7 +35,7 @@ load(Neo, RegattaId, ReqData) when is_record(ReqData, wm_reqdata) ->
 load_results(Neo, Event, RaceType) ->
   case neo4j_utils:transform_cypher_result(
 		 neo4j:cypher(Neo,
-					  <<"START ev=node({eventId}) MATCH (ev:Event)-->(r:Race)-->(b:Boat)-->(c:Country) WHERE r.type={raceType} OPTIONAL MATCH b-->(p:Person) WITH r, b, c, collect(p.firstName + ' ' + p.lastName) as names OPTIONAL MATCH b-[m:MEASUREMENT]->(d:Checkpoint) WITH r, b, c, names, CASE WHEN EXISTS(d.distance) THEN collect({distance: d.distance, time: m.time}) ELSE [] END as times ORDER BY r.abbr, b.position=0, b.position RETURN r.name as race, r.abbr as raceAbbr, collect({name: b.name, country: c.name, position: b.position, names: names, times: times}) as boats ORDER BY raceAbbr">>,
+					  <<"START ev=node({eventId}) MATCH (ev:Event)-->(r:Race)-->(b:Boat)-->(c:Country) WHERE r.type={raceType} OPTIONAL MATCH b-->(p:Person) WITH r, b, c, collect(p.firstName + ' ' + p.lastName) as names OPTIONAL MATCH b-[m:MEASUREMENT]->(d:Checkpoint) WITH r, b, c, names, CASE WHEN EXISTS(d.distance) THEN collect({distance: d.distance, time: m.time}) ELSE [] END as times ORDER BY r.abbr, b.position=0, b.position RETURN r.name as race, r.date AS date, r.abbr as raceAbbr, collect({name: b.name, country: c.name, position: b.position, names: names, times: times}) as boats ORDER BY raceAbbr">>,
     			  [{<<"raceType">>, RaceType}, {<<"eventId">>, proplists:get_value(<<"id">>, Event)}]
 					 )) of
 	{ok, Results} ->

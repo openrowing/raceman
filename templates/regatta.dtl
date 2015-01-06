@@ -5,9 +5,9 @@
 {% block content %}
 
   <div class=container>
-    <h1>{{ regatta.name }}</h1>
+    <h1>{{ regatta.name }} {{ regatta.year }}</h1>
     <p>
-      {{ regatta.year }} in {{ regatta.venueCity }} ({{ regatta.venueCountry }})
+      {{ regatta.from|date_from_ts: "d.m." }} - {{ regatta.to|date_from_ts: "d.m.Y" }} in {{ regatta.venueCity }} ({{ regatta.venueCountry }})
     </p>
     <h2>Rennen</h2>
     {% for event in events %}

@@ -7,7 +7,7 @@
 load(Neo, RegattaId) when is_integer(RegattaId) ->
   case neo4j_utils:transform_cypher_result(
 		 neo4j:cypher(Neo,
-					  <<"START reg=node({id}) MATCH (s:Season)-->reg-->(city:City)-->(country:Country) RETURN ID(reg) AS id, reg.name AS name, s.year AS year, city.name AS venueCity, country.name AS venueCountry">>,
+					  <<"START reg=node({id}) MATCH (s:Season)-->reg-->(city:City)-->(country:Country) RETURN ID(reg) AS id, reg.name AS name, reg.from AS from, reg.to AS to, s.year AS year, city.name AS venueCity, country.name AS venueCountry">>,
 					  [{<<"id">>, RegattaId}]
 					 )) of
 	{ok, [Regatta|_]} ->

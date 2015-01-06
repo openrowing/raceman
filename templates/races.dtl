@@ -8,6 +8,7 @@
     <h1><a href="/regattas/{{ regatta.id }}">{{ regatta.name }}</a>: {{ event.name }}</h1>
     {% for race in results %}
       <h3>{{race.race}}</h3>
+      <h5>{{ race.date|date_from_ts: "d.m.Y G:i" }}</h5>
       <table class="table table-striped">
         <thead>
           <tr>
